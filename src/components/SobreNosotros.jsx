@@ -1,32 +1,21 @@
 // src/components/SobreNosotros.jsx
-import React, { useState } from 'react';
+import React from 'react';
 
 const SobreNosotros = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-  };
-
   return (
-    <section id="about" className="p-6 bg-gray-100">
-      <button 
-        onClick={toggleVisibility} 
-        className="text-xl font-bold mb-4 bg-green-500 text-white p-2 rounded-md hover:bg-green-600"
-      >
-        {isVisible ? 'Ocultar Sobre Nosotros' : 'Mostrar Sobre Nosotros'}
-      </button>
-      {isVisible && (
-        <div className="mt-4">
-          <h2 className="text-2xl font-bold mb-4">Sobre Nosotros</h2>
-          <p className="text-gray-700">
-            esta web fue creada para rescatar y encontrar hogares para mascotas abandonadas. 
-          
-          </p>
-        </div>
-      )}
+    <section className="p-4 bg-gray-100 rounded-md shadow-md">
+      <h1 className="text-2xl font-bold mb-4">Sobre Nosotros</h1>
+      <p className="mb-4">
+        Somos una organización dedicada al rescate y bienestar de mascotas. 
+        Nuestro objetivo es encontrar hogares amorosos para animales en situación de necesidad y promover el bienestar animal.
+      </p>
+      <p>
+        Nuestro equipo está compuesto por voluntarios apasionados por los animales y comprometidos con su cuidado y protección. 
+        Trabajamos arduamente para proporcionar refugio, atención médica y encontrar adopciones adecuadas para cada mascota.
+      </p>
     </section>
   );
 };
 
 export default SobreNosotros;
+

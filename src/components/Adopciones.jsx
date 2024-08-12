@@ -16,36 +16,43 @@ const mascotas = [
 ];
 
 const Adopciones = () => {
+  // Estado para la lista de mascotas y campos del formulario
   const [listaMascotas, setListaMascotas] = useState(mascotas);
   const [nuevoNombre, setNuevoNombre] = useState('');
   const [nuevaDescripcion, setNuevaDescripcion] = useState('');
   const [nuevaFoto, setNuevaFoto] = useState(null);
   const [fotoPreview, setFotoPreview] = useState('');
 
+  // Función para manejar el cambio de archivo (para la foto de la mascota)
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFotoPreview(reader.result);
-        setNuevaFoto(reader.result);
+        setFotoPreview(reader.result);  // Establece la vista previa de la foto
+        setNuevaFoto(reader.result);    // Establece la foto seleccionada
       };
       reader.readAsDataURL(file);
     }
   };
 
+  // Función para agregar una nueva mascota a la lista
   const agregarMascota = (e) => {
-    e.preventDefault();
-    const nuevaMascota = {
-      nombre: nuevoNombre,
-      descripcion: nuevaDescripcion,
-      foto: nuevaFoto,
-    };
-    setListaMascotas([...listaMascotas, nuevaMascota]);
-    setNuevoNombre('');
-    setNuevaDescripcion('');
-    setNuevaFoto(null);
-    setFotoPreview('');
+    e.preventDefault();  // Previene el comportamiento por defecto del formulario (recargar la página)
+    if (nuevoNombre && nuevaDescripcion && nuevaFoto) {
+      const nuevaMascota = {
+        nombre: nuevoNombre,
+        descripcion: nuevaDescripcion,
+        foto: nuevaFoto,
+      };
+      // Actualiza la lista de mascotas añadiendo la nueva mascota
+      setListaMascotas([...listaMascotas, nuevaMascota]);
+      // Limpia los campos del formulario
+      setNuevoNombre('');
+      setNuevaDescripcion('');
+      setNuevaFoto(null);
+      setFotoPreview('');
+    }
   };
 
   return (
@@ -81,7 +88,7 @@ const Adopciones = () => {
               className="border border-gray-300 p-2 w-full"
             />
             {fotoPreview && (
-              <img src={fotoPreview} alt="Vista previa" className="w-full h-32 object-cover mt-2" />
+              <img src={fotoPreview} alt="Vista previa" className="w-full h-32 object-contain mt-2" />
             )}
           </div>
           <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
@@ -94,7 +101,7 @@ const Adopciones = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {listaMascotas.map((mascota, index) => (
             <div key={index} className="border border-gray-300 p-4 rounded shadow-sm">
-              <img src={mascota.foto} alt={mascota.nombre} className="w-full h-32 object-cover mb-3" />
+              <img src={mascota.foto} alt={mascota.nombre} className="w-full h-32 object-contain mb-3" />
               <h4 className="text-md font-semibold">{mascota.nombre}</h4>
               <p>{mascota.descripcion}</p>
             </div>
@@ -106,4 +113,6 @@ const Adopciones = () => {
 };
 
 export default Adopciones;
+
+
 

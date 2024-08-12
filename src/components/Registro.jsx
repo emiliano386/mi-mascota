@@ -1,4 +1,3 @@
-// src/components/Registro.jsx
 import React, { useState } from 'react';
 
 const Registro = () => {
@@ -6,6 +5,8 @@ const Registro = () => {
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -15,10 +16,21 @@ const Registro = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Formulario de registro enviado:', form);
-    
+    setLoading(true);
+    setError('');
+
+    try {
+      // Simulación de llamada a una API
+      // Reemplaza esto con tu llamada real a la API
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log('Formulario de registro enviado:', form);
+    } catch (e) {
+      setError('Ocurrió un error al enviar el formulario.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,11 +59,13 @@ const Registro = () => {
             required
           />
         </div>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <button
           type="submit"
           style={{ backgroundColor: 'green', color: 'white', padding: '10px', border: 'none', cursor: 'pointer' }}
+          disabled={loading}
         >
-          Registrarse
+          {loading ? 'Registrando...' : 'Registrarse'}
         </button>
       </form>
     </section>

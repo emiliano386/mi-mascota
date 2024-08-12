@@ -6,8 +6,8 @@ const NavBar = ({ setActiveSection }) => {
     <nav style={{ backgroundColor: 'green', padding: '10px' }}>
       <ul style={{ display: 'flex', justifyContent: 'center', listStyleType: 'none', padding: 0 }}>
         <li style={{ margin: '0 10px' }}>
-          <button onClick={() => setActiveSection('sobre-nosotros')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'white' }}>
-            Sobre Nosotros
+          <button onClick={() => setActiveSection('home')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'white' }}>
+            Home
           </button>
         </li>
         <li style={{ margin: '0 10px' }}>
@@ -35,9 +35,17 @@ const NavBar = ({ setActiveSection }) => {
             Registro
           </button>
         </li>
+        <li style={{ margin: '0 10px' }}>
+          <button onClick={() => setActiveSection('sobre-nosotros')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'white' }}>
+            Sobre Nosotros
+          </button>
+        </li>
       </ul>
     </nav>
   );
 };
 
 export default NavBar;
+
+
+
