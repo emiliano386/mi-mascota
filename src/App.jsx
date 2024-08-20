@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavBar from './components/NavBar';
 import Home from './components/Home';
 import SobreNosotros from './components/SobreNosotros';
@@ -9,7 +9,27 @@ import Veterinarias from './components/Veterinarias';
 import Adopciones from './components/Adopciones';
 
 function App() {
-  const [activeSection, setActiveSection] = useState('home'); // Cambiar la sección inicial a 'home'
+  const [activeSection, setActiveSection] = useState('home');
+  const [veterinarias, setVeterinarias] = useState([]);
+
+  const fetchVeterinarias = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/veterinarias');
+      if (!response.ok) {
+        throw new Error('Red error');
+      }
+      const data = await response.json();
+      setVeterinarias(data);
+    } catch (error) {
+      console.error('Error fetching veterinarias:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (activeSection === 'veterinarias') {
+      fetchVeterinarias();
+    }
+  }, [activeSection]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -25,7 +45,9 @@ function App() {
           </section>
         )}
         {activeSection === 'adopciones' && <Adopciones />}
-        {activeSection === 'veterinarias' && <Veterinarias />}
+        {activeSection === 'veterinarias' && (
+          <Veterinarias veterinarias={veterinarias} />
+        )}
         {activeSection === 'refugios' && <Refugios />}
         {activeSection === 'registro' && <Registro />}
       </main>
@@ -38,9 +60,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-

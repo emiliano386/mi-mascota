@@ -1,41 +1,23 @@
-// server.js
-
+require('dotenv').config(); // Esto carga las variables de entorno desde el archivo .env
 const express = require('express');
-const { MongoClient } = require('mongodb');
-require('dotenv').config();
-
+const mongoose = require('mongoose');
+const cors = require('cors');
 const app = express();
-const port = 5000;
 
-// Middleware para procesar JSON
+// Middleware
+app.use(cors()); // Permite todas las solicitudes CORS
 app.use(express.json());
 
-// Conexión a MongoDB
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+// Conexión a la base de datos
+const MONGO_URI = process.env.MONGO_URI;
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Conectado a MongoDB'))
+    .catch((err) => console.error('Error al conectar a MongoDB:', err));
 
-async function connectToDatabase() {
-    try {
-        await client.connect();
-        console.log("Conectado a MongoDB");
-    } catch (e) {
-        console.error("Error conectando a MongoDB:", e);
-    }
-}
+// Rutas
+const veterinariasRoutes = require('./modelo/routes/veterinarias');
+app.use('/api/veterinarias', veterinariasRoutes);
 
-connectToDatabase();
-
-// Ruta de prueba
-app.get('/', (req, res) => {
-    res.send('¡Hola, mundo!');
-});
-
-// Importa el enrutador de veterinarias
-const veterinariasRouter = require('./modelos/routes/veterinarias');
-
-// Usa el enrutador de veterinarias
-app.use('/api/veterinarias', veterinariasRouter);
-
-app.listen(port, () => {
-    console.log(`Servidor escuchando en http://localhost:${port}`);
-});
+// Puerto
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Servidor corriendo en el puerto ${PORT}`));

@@ -1,5 +1,3 @@
-// modelo/Veterinaria.js
-
 const mongoose = require('mongoose');
 
 // Define el esquema para Veterinaria
