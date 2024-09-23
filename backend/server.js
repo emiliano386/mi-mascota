@@ -1,23 +1,58 @@
-require('dotenv').config(); // Esto carga las variables de entorno desde el archivo .env
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const app = express();
-
-// Middleware
-app.use(cors()); // Permite todas las solicitudes CORS
-app.use(express.json());
-
-// Conexión a la base de datos
-const MONGO_URI = process.env.MONGO_URI;
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Conectado a MongoDB'))
-    .catch((err) => console.error('Error al conectar a MongoDB:', err));
+require('dotenv').config(); // Cargar variables de entorno desde el archivo .env
 
 // Rutas
-const veterinariasRoutes = require('./modelo/routes/veterinarias');
-app.use('/api/veterinarias', veterinariasRoutes);
+const adopcionesRouter = require('./modelo/routes/adopciones');
+const mascotasPerdidasRouter = require('./modelo/routes/mascotasPerdidas');
+const veterinariasRouter = require('./modelo/routes/veterinarias');
+const registroRouter = require('./modelo/routes/registro');
+const enviarCorreoRouter = require('./modelo/enviarCorreo');
 
-// Puerto
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Servidor corriendo en el puerto ${PORT}`));
+const app = express();
+const port = process.env.PORT || 5000;
+
+// Configuración de CORS
+const corsOptions = {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type'],
+};
+
+app.use(cors(corsOptions));
+
+// Middleware
+app.use(express.json());
+
+// Rutas
+app.use('/api/adopciones', adopcionesRouter);
+app.use('/api/mascotasPerdidas', mascotasPerdidasRouter); // Asegúrate de que la ruta sea consistente
+app.use('/api/veterinarias', veterinariasRouter);
+app.use('/api/registro', registroRouter);
+app.use('/api/enviar-correo', enviarCorreoRouter); // Consistencia en las rutas
+
+// Conectar a MongoDB
+const mongoUri = process.env.MONGODB_URI; // Obtener la URI desde .env
+if (!mongoUri) {
+  console.error('Error: MONGODB_URI no está definida en el archivo .env');
+  process.exit(1);
+}
+
+mongoose.connect(mongoUri)
+  .then(() => console.log('Conectado a MongoDB'))
+  .catch(err => {
+    console.error('Error al conectar a MongoDB:', err);
+    process.exit(1);
+  });
+
+// Manejo de errores
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Algo salió mal');
+});
+
+// Iniciar el servidor
+app.listen(port, () => {
+  console.log(`Servidor corriendo en el puerto ${port}`);
+});

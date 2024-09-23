@@ -12,12 +12,13 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Agregar una nueva veterinaria
+// Agregar una nueva veterinaria (sin manejo de imágenes)
 router.post('/', async (req, res) => {
     const veterinaria = new Veterinaria({
         nombre: req.body.nombre,
         direccion: req.body.direccion,
-        telefono: req.body.telefono
+        telefono: req.body.telefono,
+        // No se incluye la imagen
     });
 
     try {
@@ -28,7 +29,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Actualizar una veterinaria existente (PUT)
+// Actualizar una veterinaria existente (PUT) (sin manejo de imágenes)
 router.put('/:id', async (req, res) => {
     try {
         const veterinaria = await Veterinaria.findById(req.params.id);
@@ -40,6 +41,7 @@ router.put('/:id', async (req, res) => {
         veterinaria.nombre = req.body.nombre || veterinaria.nombre;
         veterinaria.direccion = req.body.direccion || veterinaria.direccion;
         veterinaria.telefono = req.body.telefono || veterinaria.telefono;
+        // No se actualiza la imagen
 
         const veterinariaActualizada = await veterinaria.save();
         res.json(veterinariaActualizada);
@@ -48,7 +50,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Actualizar parcialmente una veterinaria existente (PATCH)
+// Actualizar parcialmente una veterinaria existente (PATCH) (sin manejo de imágenes)
 router.patch('/:id', async (req, res) => {
     try {
         const veterinaria = await Veterinaria.findById(req.params.id);
@@ -60,6 +62,7 @@ router.patch('/:id', async (req, res) => {
         if (req.body.nombre) veterinaria.nombre = req.body.nombre;
         if (req.body.direccion) veterinaria.direccion = req.body.direccion;
         if (req.body.telefono) veterinaria.telefono = req.body.telefono;
+        // No se actualiza la imagen
 
         const veterinariaActualizada = await veterinaria.save();
         res.json(veterinariaActualizada);

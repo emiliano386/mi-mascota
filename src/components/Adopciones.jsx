@@ -1,118 +1,115 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-// Lista inicial de mascotas en adopción
-const mascotas = [
-  {
-    nombre: 'Rex',
-    descripcion: 'Perro grande y amigable, busca una familia amorosa.',
-    foto: 'https://via.placeholder.com/150',
-  },
-  {
-    nombre: 'Miau',
-    descripcion: 'Gato de pelaje negro, muy cariñoso y juguetón.',
-    foto: 'https://via.placeholder.com/150',
-  },
-  // Agrega más mascotas aquí
-];
+function Adopciones() {
+  const [adopciones, setAdopciones] = useState([]);
+  const [nombre, setNombre] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [mensaje, setMensaje] = useState('');
 
-const Adopciones = () => {
-  // Estado para la lista de mascotas y campos del formulario
-  const [listaMascotas, setListaMascotas] = useState(mascotas);
-  const [nuevoNombre, setNuevoNombre] = useState('');
-  const [nuevaDescripcion, setNuevaDescripcion] = useState('');
-  const [nuevaFoto, setNuevaFoto] = useState(null);
-  const [fotoPreview, setFotoPreview] = useState('');
+  // Cargar las adopciones desde el backend
+  useEffect(() => {
+    axios.get('/api/adopciones')
+      .then(response => setAdopciones(response.data))
+      .catch(error => console.error('Error al obtener las adopciones:', error));
+  }, []);
 
-  // Función para manejar el cambio de archivo (para la foto de la mascota)
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFotoPreview(reader.result);  // Establece la vista previa de la foto
-        setNuevaFoto(reader.result);    // Establece la foto seleccionada
-      };
-      reader.readAsDataURL(file);
-    }
+  // Manejar el envío del formulario
+  const onFormSubmit = (e) => {
+    e.preventDefault();
+
+    axios.post('/api/adopciones', { nombre, descripcion, telefono })
+      .then(() => {
+        setNombre('');
+        setDescripcion('');
+        setTelefono('');
+        setMensaje('¡La adopción se cargó correctamente!');
+        
+        // Refresca la lista de adopciones
+        axios.get('/api/adopciones')
+          .then(response => setAdopciones(response.data))
+          .catch(error => console.error('Error al obtener las adopciones:', error));
+        
+        // Restablecer el mensaje después de un breve período
+        setTimeout(() => setMensaje(''), 3000); // Ajusta el tiempo según sea necesario
+      })
+      .catch(error => {
+        console.error('Error al agregar la adopción:', error);
+        setMensaje('Error al agregar la adopción.');
+        setTimeout(() => setMensaje(''), 3000); // Ajusta el tiempo según sea necesario
+      });
   };
 
-  // Función para agregar una nueva mascota a la lista
-  const agregarMascota = (e) => {
-    e.preventDefault();  // Previene el comportamiento por defecto del formulario (recargar la página)
-    if (nuevoNombre && nuevaDescripcion && nuevaFoto) {
-      const nuevaMascota = {
-        nombre: nuevoNombre,
-        descripcion: nuevaDescripcion,
-        foto: nuevaFoto,
-      };
-      // Actualiza la lista de mascotas añadiendo la nueva mascota
-      setListaMascotas([...listaMascotas, nuevaMascota]);
-      // Limpia los campos del formulario
-      setNuevoNombre('');
-      setNuevaDescripcion('');
-      setNuevaFoto(null);
-      setFotoPreview('');
-    }
-  };
+  // Filtrar las adopciones para mostrar solo las que tienen información relevante
+  const filtradas = adopciones.filter(adopcion => adopcion.nombre || adopcion.descripcion || adopcion.telefono);
 
   return (
-    <section className="bg-white p-5 mb-5">
-      <h2 className="text-xl font-bold mb-4">Mascotas en Adopción</h2>
-      <div className="mb-5">
-        <h3 className="text-lg font-semibold mb-2">Agregar una nueva mascota</h3>
-        <form onSubmit={agregarMascota} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Nombre:</label>
-            <input
-              type="text"
-              value={nuevoNombre}
-              onChange={(e) => setNuevoNombre(e.target.value)}
-              className="border border-gray-300 p-2 w-full"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Descripción:</label>
-            <textarea
-              value={nuevaDescripcion}
-              onChange={(e) => setNuevaDescripcion(e.target.value)}
-              className="border border-gray-300 p-2 w-full"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Foto:</label>
-            <input
-              type="file"
-              onChange={handleFileChange}
-              className="border border-gray-300 p-2 w-full"
-            />
-            {fotoPreview && (
-              <img src={fotoPreview} alt="Vista previa" className="w-full h-32 object-contain mt-2" />
-            )}
-          </div>
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-            Agregar Mascota
-          </button>
-        </form>
-      </div>
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Lista de Mascotas</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {listaMascotas.map((mascota, index) => (
-            <div key={index} className="border border-gray-300 p-4 rounded shadow-sm">
-              <img src={mascota.foto} alt={mascota.nombre} className="w-full h-32 object-contain mb-3" />
-              <h4 className="text-md font-semibold">{mascota.nombre}</h4>
-              <p>{mascota.descripcion}</p>
-            </div>
-          ))}
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">Adopciones</h1>
+      <form onSubmit={onFormSubmit} className="space-y-4 mb-6">
+        <div>
+          <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">Nombre</label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            placeholder="Nombre"
+            required
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          />
         </div>
+        <div>
+          <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700">Descripción</label>
+          <input
+            type="text"
+            id="descripcion"
+            name="descripcion"
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+            placeholder="Descripción"
+            required
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          />
+        </div>
+        <div>
+          <label htmlFor="telefono" className="block text-sm font-medium text-gray-700">Teléfono</label>
+          <input
+            type="text"
+            id="telefono"
+            name="telefono"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+            placeholder="Teléfono"
+            required
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-blue-600"
+        >
+          Agregar Adopción
+        </button>
+      </form>
+      {mensaje && (
+        <div className="bg-green-100 text-green-800 border border-green-400 rounded-lg p-4 mb-6">
+          {mensaje}
+        </div>
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {filtradas.map(adopcion => (
+          <div key={adopcion._id} className="border border-gray-300 rounded-lg p-4 shadow-sm">
+            {adopcion.nombre && <h2 className="text-xl font-semibold mb-2">{adopcion.nombre}</h2>}
+            {adopcion.descripcion && <p className="text-gray-700 mb-4">{adopcion.descripcion}</p>}
+            {adopcion.telefono && <p className="text-gray-700">Teléfono: {adopcion.telefono}</p>}
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
   );
-};
+}
 
 export default Adopciones;
-
-
-
