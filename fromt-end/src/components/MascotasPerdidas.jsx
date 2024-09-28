@@ -10,7 +10,7 @@ function MascotasPerdidas() {
 
   // Cargar las mascotas perdidas desde el backend
   useEffect(() => {
-    axios.get('https://mi-mascota-backend.onrender.com/api/mascotas-perdidas')
+    axios.get('/api/mascotasPerdidas')
       .then(response => setMascotas(response.data))
       .catch(error => console.error('Error al obtener las mascotas perdidas:', error));
   }, []);
@@ -26,16 +26,14 @@ function MascotasPerdidas() {
     };
 
     try {
-      await axios.post('https://mi-mascota-backend.onrender.com/api/mascotas-perdidas', nuevaMascota);
+      await axios.post('/api/mascotasPerdidas', nuevaMascota);
       setNombre('');
       setDescripcion('');
       setTelefono('');
       setMensaje('¡La mascota perdida se reportó correctamente!');
-      
       // Refresca la lista de mascotas perdidas
-      const response = await axios.get('https://mi-mascota-backend.onrender.com/api/mascotas-perdidas');
+      const response = await axios.get('/api/mascotasPerdidas');
       setMascotas(response.data);
-      
       // Restablecer el mensaje después de un breve período
       setTimeout(() => setMensaje(''), 3000);
     } catch (error) {
