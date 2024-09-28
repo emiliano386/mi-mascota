@@ -27,7 +27,7 @@ app.use(express.json()); // Permite manejar datos JSON en las solicitudes
 app.use('/api/adopciones', adopcionesRouter);
 app.use('/api/mascotasPerdidas', mascotasPerdidasRouter); 
 app.use('/api/registro', registroRouter);
-app.use('/api/enviar-correo', enviarCorreoRouter); 
+app.use('/api/enviarCorreo', enviarCorreoRouter); 
 
 // Conexión a MongoDB
 const mongoUri = process.env.MONGODB_URI; 
