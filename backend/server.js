@@ -23,6 +23,7 @@ app.use(cors(corsOptions));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.json());
 
+// Rutas de la API
 app.use('/api/adopciones', adopcionesRouter);
 app.use('/api/mascotasPerdidas', mascotasPerdidasRouter); 
 app.use('/api/veterinarias', veterinariasRouter);
