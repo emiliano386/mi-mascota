@@ -6,7 +6,6 @@ require('dotenv').config(); // Carga las variables de entorno desde el archivo .
 
 const adopcionesRouter = require('./modelo/routes/adopciones');
 const mascotasPerdidasRouter = require('./modelo/routes/mascotasPerdidas');
-const veterinariasRouter = require('./modelo/routes/veterinarias');
 const registroRouter = require('./modelo/routes/registro');
 const enviarCorreoRouter = require('./modelo/enviarCorreo');
 
@@ -15,7 +14,7 @@ const port = process.env.PORT || 5000;
 
 // Configuración de CORS
 const corsOptions = {
-  origin: 'https://mi-mascota-backend.onrender.com', // Cambia esto al dominio de tu frontend
+  origin: 'https://mi-mascota.onrender.com', // Dominio de tu frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
 };
@@ -27,7 +26,6 @@ app.use(express.json()); // Permite manejar datos JSON en las solicitudes
 // Rutas de la API
 app.use('/api/adopciones', adopcionesRouter);
 app.use('/api/mascotasPerdidas', mascotasPerdidasRouter); 
-app.use('/api/veterinarias', veterinariasRouter);
 app.use('/api/registro', registroRouter);
 app.use('/api/enviar-correo', enviarCorreoRouter); 
 
