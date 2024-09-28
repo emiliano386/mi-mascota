@@ -10,6 +10,7 @@ const modeloMascotasSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  
   telefono: {
     type: String,
     required: true,

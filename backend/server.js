@@ -23,11 +23,11 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Middleware para servir archivos estáticos desde la carpeta 'public'
+app.use(express.static(path.join(__dirname, '../public'))); // Ajustar la ruta a la carpeta public
+
 // Middleware
 app.use(express.json());
-
-// Servir archivos estáticos desde la carpeta 'src'
-app.use('/src', express.static(path.join(__dirname, 'src')));
 
 // Definir las rutas
 app.use('/api/adopciones', adopcionesRouter);

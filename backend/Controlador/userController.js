@@ -5,6 +5,12 @@ const registrarUsuario = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Verificar si el usuario ya existe
+    const usuarioExistente = await User.findOne({ email });
+    if (usuarioExistente) {
+      return res.status(400).json({ message: 'El usuario ya está registrado.' });
+    }
+
     // Crear un nuevo usuario (ajusta según tu modelo de usuario)
     const nuevoUsuario = new User({ email, password });
     await nuevoUsuario.save();
@@ -19,9 +25,14 @@ const registrarUsuario = async (req, res) => {
     res.status(201).send('Usuario registrado exitosamente');
   } catch (error) {
     console.error('Error al registrar el usuario:', error);
-    res.status(500).send('Error al registrar el usuario');
+
+    // Capturamos el tipo de error para dar más información
+    const errorMessage = error.code === 11000 
+      ? 'El correo ya está registrado.'
+      : 'Error al registrar el usuario.';
+
+    res.status(500).json({ message: errorMessage, error: error.message });
   }
 };
 
 module.exports = registrarUsuario;
-
