@@ -6,6 +6,7 @@ body {
     background-color: #f0f0f0; /* Color de fondo */
     font-family: Arial, sans-serif; /* Fuente */
     margin: 0; /* Eliminar margen por defecto */
+    text-size-adjust: 100%; /* Agregar esta línea para compatibilidad */
 }
 
 h1, h2, h3 {

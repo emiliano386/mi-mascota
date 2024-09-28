@@ -5,6 +5,8 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  /* Ajuste de tamaño de texto para mejorar la legibilidad en dispositivos móviles */
+  text-size-adjust: 100%; /* Asegura que el texto no se ajuste automáticamente */
 }
 
 .logo {
