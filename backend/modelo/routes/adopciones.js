@@ -1,85 +1,31 @@
-import { useState } from 'react';
-import axios from 'axios';
+const express = require('express');
+const router = express.Router();
+const Adopcion = require('../modelos/Adopcion'); // Asegúrate de que el modelo esté en esta ruta
 
-const Adopciones = () => {
-  // Definir los estados
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [mensajeExito, setMensajeExito] = useState('');
-  const [adopciones, setAdopciones] = useState([]);
+// Ruta para registrar una adopción
+router.post('/', async (req, res) => {
+  const { nombre, descripcion, telefono } = req.body;
 
-  // Manejar el registro de adopciones
-  const manejarRegistro = async (e) => {
-    e.preventDefault();
+  // Lógica para guardar la adopción en la base de datos
+  try {
+    const nuevaAdopcion = new Adopcion({ nombre, descripcion, telefono });
+    await nuevaAdopcion.save();
+    res.status(201).json(nuevaAdopcion);
+  } catch (error) {
+    console.error('Error al registrar adopción:', error);
+    res.status(400).json({ message: 'Error al registrar la adopción. Verifica los datos ingresados.' });
+  }
+});
 
-    // Validación de campos
-    if (!nombre || !descripcion || !telefono) {
-      setMensajeExito('Por favor, complete todos los campos.');
-      return;
-    }
+// Ruta para obtener todas las adopciones
+router.get('/', async (req, res) => {
+  try {
+    const adopciones = await Adopcion.find(); // Asegúrate de que el modelo esté configurado correctamente
+    res.json(adopciones);
+  } catch (error) {
+    console.error('Error al obtener adopciones:', error);
+    res.status(500).json({ message: 'Error al obtener adopciones.' });
+  }
+});
 
-    try {
-      // Petición al backend
-      const respuesta = await axios.post('https://mi-mascota-backend.onrender.com/api/adopciones', {
-        nombre,
-        descripcion,
-        telefono,
-      });
-
-      // Actualizar el estado de adopciones con la nueva adopción registrada
-      setAdopciones((prevAdopciones) => [...prevAdopciones, respuesta.data]);
-
-      // Limpiar los campos y mostrar mensaje de éxito
-      setMensajeExito('Adopción registrada con éxito.');
-      setNombre('');
-      setDescripcion('');
-      setTelefono('');
-    } catch (error) {
-      // Manejo de errores, incluyendo mensajes personalizados según el código de respuesta
-      if (error.response && error.response.status === 400) {
-        setMensajeExito('Error: Datos inválidos.');
-      } else {
-        setMensajeExito('Hubo un error al registrar la adopción.');
-      }
-      console.error('Error al registrar adopción:', error);
-    }
-  };
-
-  return (
-    <div>
-      <h1>Registrar Mascota en Adopción</h1>
-      <form onSubmit={manejarRegistro}>
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Descripción"
-          value={descripcion}
-          onChange={(e) => setDescripcion(e.target.value)}
-        />
-        <input
-          type="tel"
-          placeholder="Teléfono"
-          value={telefono}
-          onChange={(e) => setTelefono(e.target.value)}
-        />
-        <button type="submit">Registrar</button>
-      </form>
-      {mensajeExito && <p>{mensajeExito}</p>}
-      <ul>
-        {adopciones.map((adopcion, index) => (
-          <li key={index}>
-            <strong>{adopcion.nombre}</strong>: {adopcion.descripcion} - {adopcion.telefono}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export default Adopciones;
+module.exports = router;

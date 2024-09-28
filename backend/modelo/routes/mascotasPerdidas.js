@@ -1,85 +1,31 @@
-import { useState } from 'react';
-import axios from 'axios';
+const express = require('express');
+const router = express.Router();
+const MascotaPerdida = require('../MascotaPerdida'); // Asegúrate de que el modelo esté en esta ruta
 
-const MascotasPerdidas = () => {
-  // Definir los estados
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [mensajeExito, setMensajeExito] = useState('');
-  const [mascotas, setMascotas] = useState([]);
+// Ruta para registrar una mascota perdida
+router.post('/', async (req, res) => {
+  const { nombre, descripcion, telefono } = req.body;
 
-  // Manejar el registro de la mascota perdida
-  const manejarRegistro = async (e) => {
-    e.preventDefault();
+  // Lógica para guardar la mascota perdida en la base de datos
+  try {
+    const nuevaMascotaPerdida = new MascotaPerdida({ nombre, descripcion, telefono });
+    await nuevaMascotaPerdida.save();
+    res.status(201).json(nuevaMascotaPerdida);
+  } catch (error) {
+    console.error('Error al registrar mascota perdida:', error);
+    res.status(400).json({ message: 'Error al registrar la mascota perdida. Verifica los datos ingresados.' });
+  }
+});
 
-    // Validación de campos
-    if (!nombre || !descripcion || !telefono) {
-      setMensajeExito('Por favor, complete todos los campos.');
-      return;
-    }
+// Ruta para obtener todas las mascotas perdidas
+router.get('/', async (req, res) => {
+  try {
+    const mascotasPerdidas = await MascotaPerdida.find();
+    res.json(mascotasPerdidas);
+  } catch (error) {
+    console.error('Error al obtener mascotas perdidas:', error);
+    res.status(500).json({ message: 'Error al obtener mascotas perdidas.' });
+  }
+});
 
-    try {
-      // Petición al backend
-      const respuesta = await axios.post('https://mi-mascota-backend.onrender.com/api/mascotasPerdidas', {
-        nombre,
-        descripcion,
-        telefono,
-      });
-
-      // Actualizar el estado de mascotas con la nueva mascota registrada
-      setMascotas((prevMascotas) => [...prevMascotas, respuesta.data]);
-
-      // Limpiar los campos y mostrar mensaje de éxito
-      setMensajeExito('Mascota registrada con éxito.');
-      setNombre('');
-      setDescripcion('');
-      setTelefono('');
-    } catch (error) {
-      // Manejo de errores, incluyendo mensajes personalizados según el código de respuesta
-      if (error.response && error.response.status === 400) {
-        setMensajeExito('Error: Datos inválidos.');
-      } else {
-        setMensajeExito('Hubo un error al registrar la mascota.');
-      }
-      console.error('Error al registrar mascota:', error);
-    }
-  };
-
-  return (
-    <div>
-      <h1>Registrar Mascota Perdida</h1>
-      <form onSubmit={manejarRegistro}>
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Descripción"
-          value={descripcion}
-          onChange={(e) => setDescripcion(e.target.value)}
-        />
-        <input
-          type="tel"
-          placeholder="Teléfono"
-          value={telefono}
-          onChange={(e) => setTelefono(e.target.value)}
-        />
-        <button type="submit">Registrar</button>
-      </form>
-      {mensajeExito && <p>{mensajeExito}</p>}
-      <ul>
-        {mascotas.map((mascota, index) => (
-          <li key={index}>
-            <strong>{mascota.nombre}</strong>: {mascota.descripcion} - {mascota.telefono}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export default MascotasPerdidas;
+module.exports = router;

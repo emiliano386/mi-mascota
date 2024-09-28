@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-// Definir el esquema para Mascotas Perdidas
-const mascotaPerdidaSchema = new mongoose.Schema({
+const MascotaPerdidaSchema = new mongoose.Schema({
   nombre: {
     type: String,
     required: true,
@@ -14,10 +13,8 @@ const mascotaPerdidaSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  fechaReporte: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  // Otros campos que consideres necesarios
+}, { timestamps: true }); // Agrega timestamps para saber cuándo se creó o actualizó
 
-module.exports = mongoose.model('MascotaPerdida', mascotaPerdidaSchema);
+const MascotaPerdida = mongoose.model('MascotaPerdida', MascotaPerdidaSchema);
+module.exports = MascotaPerdida;

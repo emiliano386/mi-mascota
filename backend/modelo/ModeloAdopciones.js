@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-// Definir el esquema de Adopción
-const adopcionSchema = new mongoose.Schema({
+const AdopcionSchema = new mongoose.Schema({
   nombre: {
     type: String,
     required: true,
@@ -14,7 +13,7 @@ const adopcionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-});
+}, { timestamps: true }); // Agrega timestamps para saber cuándo se creó o actualizó
 
-// Crear y exportar el modelo de Adopción
-module.exports = mongoose.model('Adopcion', adopcionSchema);
+const Adopcion = mongoose.model('Adopcion', AdopcionSchema);
+module.exports = Adopcion;
