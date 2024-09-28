@@ -1,0 +1,12 @@
+body {
+    background-color: #f0f0f0; /* Color de fondo */
+    font-family: Arial, sans-serif; /* Fuente */
+}
+
+h1, h2, h3 {
+    color: #333; /* Color de los encabezados */
+}
+
+p {
+    color: #666; /* Color de los párrafos */
+}
