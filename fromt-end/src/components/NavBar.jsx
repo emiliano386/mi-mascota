@@ -12,13 +12,13 @@ const NavBar = ({ setActiveSection }) => {
   ];
 
   return (
-    <nav style={{ backgroundColor: 'green', padding: '10px' }}>
-      <ul style={{ display: 'flex', justifyContent: 'center', listStyleType: 'none', padding: 0 }}>
+    <nav className="bg-green-600 p-4">
+      <ul className="flex flex-wrap justify-center list-none p-0">
         {sections.map(section => (
-          <li key={section.name} style={{ margin: '0 10px' }}>
+          <li key={section.name} className="mx-2">
             <button
               onClick={() => setActiveSection(section.name)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'white' }}
+              className="text-white bg-transparent border-none cursor-pointer hover:bg-green-500 px-3 py-2 rounded"
             >
               {section.label}
             </button>

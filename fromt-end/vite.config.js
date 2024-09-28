@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000', // URL de tu backend
+        target: 'https://mi-mascota-backend.onrender.com', // Nueva URL de tu backend
         changeOrigin: true,
         secure: false, // Desactiva la verificación SSL si es un entorno local
         rewrite: (path) => path.replace(/^\/api/, ''), // Reescribe la URL si es necesario
