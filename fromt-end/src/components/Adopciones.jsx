@@ -3,10 +3,9 @@ import axios from 'axios';
 
 function Adopciones() {
   const [adopciones, setAdopciones] = useState([]);
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
-  const [telefono, setTelefono] = useState('');
+  const [nuevaAdopcion, setNuevaAdopcion] = useState({ nombre: '', descripcion: '', telefono: '' });
   const [mensaje, setMensaje] = useState('');
+  const [adopcionesRecientes, setAdopcionesRecientes] = useState([]); // Estado para adopciones recientes
 
   // Cargar las adopciones desde el backend
   useEffect(() => {
@@ -19,30 +18,29 @@ function Adopciones() {
   const onFormSubmit = (e) => {
     e.preventDefault();
 
-    axios.post('/api/adopciones', { nombre, descripcion, telefono })
+    axios.post('/api/adopciones', nuevaAdopcion)
       .then(() => {
-        setNombre('');
-        setDescripcion('');
-        setTelefono('');
         setMensaje('¡La adopción se cargó correctamente!');
-        
+
+        // Agregar la nueva adopción a la lista de adopciones recientes
+        setAdopcionesRecientes([...adopcionesRecientes, nuevaAdopcion]);
+
+        // Resetear el formulario
+        setNuevaAdopcion({ nombre: '', descripcion: '', telefono: '' });
+
         // Refresca la lista de adopciones
-        axios.get('/api/adopciones')
-          .then(response => setAdopciones(response.data))
-          .catch(error => console.error('Error al obtener las adopciones:', error));
-        
-        // Restablecer el mensaje después de un breve período
-        setTimeout(() => setMensaje(''), 3000); // Ajusta el tiempo según sea necesario
+        return axios.get('/api/adopciones');
       })
+      .then(response => setAdopciones(response.data))
       .catch(error => {
         console.error('Error al agregar la adopción:', error);
         setMensaje('Error al agregar la adopción.');
-        setTimeout(() => setMensaje(''), 3000); // Ajusta el tiempo según sea necesario
+      })
+      .finally(() => {
+        // Restablecer el mensaje después de un breve período
+        setTimeout(() => setMensaje(''), 3000);
       });
   };
-
-  // Filtrar las adopciones para mostrar solo las que tienen información relevante
-  const filtradas = adopciones.filter(adopcion => adopcion.nombre || adopcion.descripcion || adopcion.telefono);
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -54,8 +52,8 @@ function Adopciones() {
             type="text"
             id="nombre"
             name="nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            value={nuevaAdopcion.nombre}
+            onChange={(e) => setNuevaAdopcion({ ...nuevaAdopcion, nombre: e.target.value })}
             placeholder="Nombre"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -67,8 +65,8 @@ function Adopciones() {
             type="text"
             id="descripcion"
             name="descripcion"
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
+            value={nuevaAdopcion.descripcion}
+            onChange={(e) => setNuevaAdopcion({ ...nuevaAdopcion, descripcion: e.target.value })}
             placeholder="Descripción"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -80,8 +78,8 @@ function Adopciones() {
             type="text"
             id="telefono"
             name="telefono"
-            value={telefono}
-            onChange={(e) => setTelefono(e.target.value)}
+            value={nuevaAdopcion.telefono}
+            onChange={(e) => setNuevaAdopcion({ ...nuevaAdopcion, telefono: e.target.value })}
             placeholder="Teléfono"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -99,8 +97,18 @@ function Adopciones() {
           {mensaje}
         </div>
       )}
+      <h2 className="text-2xl font-semibold mb-4">Adopciones Recientes</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filtradas.map(adopcion => (
+        {adopcionesRecientes.map((adopcion, index) => (
+          <div key={index} className="border border-gray-300 rounded-lg p-4 shadow-sm">
+            <h2 className="text-xl font-semibold mb-2">{adopcion.nombre}</h2>
+            <p className="text-gray-700 mb-4">{adopcion.descripcion}</p>
+            <p className="text-gray-700">Teléfono: {adopcion.telefono}</p>
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+        {adopciones.map(adopcion => (
           <div key={adopcion._id} className="border border-gray-300 rounded-lg p-4 shadow-sm">
             {adopcion.nombre && <h2 className="text-xl font-semibold mb-2">{adopcion.nombre}</h2>}
             {adopcion.descripcion && <p className="text-gray-700 mb-4">{adopcion.descripcion}</p>}
