@@ -3,57 +3,44 @@ import axios from 'axios';
 
 function MascotasPerdidas() {
   const [mascotas, setMascotas] = useState([]);
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
-  const [telefono, setTelefono] = useState('');
+  const [nuevaMascota, setNuevaMascota] = useState({ nombre: '', descripcion: '', telefono: '' });
   const [mensaje, setMensaje] = useState('');
+  const [mascotasRecientes, setMascotasRecientes] = useState([]); // Estado para mascotas recientes
 
   // Cargar las mascotas perdidas desde el backend
   useEffect(() => {
-    const cargarMascotas = async () => {
-      try {
-        const response = await axios.get('/api/mascotasPerdidas');
-        setMascotas(response.data);
-      } catch (error) {
-        console.error('Error al obtener las mascotas perdidas:', error.response ? error.response.data : error.message);
-      }
-    };
-    
-    cargarMascotas();
+    axios.get('/api/mascotasPerdidas')
+      .then(response => setMascotas(response.data))
+      .catch(error => console.error('Error al obtener las mascotas perdidas:', error));
   }, []);
 
   // Manejar el envío del formulario
-  const onFormSubmit = async (e) => {
+  const onFormSubmit = (e) => {
     e.preventDefault();
 
-    const nuevaMascota = {
-      nombre,
-      descripcion,
-      telefono,
-    };
+    axios.post('/api/mascotasPerdidas', nuevaMascota)
+      .then(() => {
+        setMensaje('¡La mascota perdida se reportó correctamente!');
 
-    try {
-      await axios.post('/api/mascotasPerdidas', nuevaMascota);
-      setNombre('');
-      setDescripcion('');
-      setTelefono('');
-      setMensaje('¡La mascota perdida se reportó correctamente!');
+        // Agregar la nueva mascota a la lista de mascotas recientes
+        setMascotasRecientes([...mascotasRecientes, nuevaMascota]);
 
-      // Refresca la lista de mascotas perdidas
-      const response = await axios.get('/api/mascotasPerdidas');
-      setMascotas(response.data);
+        // Resetear el formulario
+        setNuevaMascota({ nombre: '', descripcion: '', telefono: '' });
 
-      // Restablecer el mensaje después de un breve período
-      setTimeout(() => setMensaje(''), 3000);
-    } catch (error) {
-      console.error('Error al reportar la mascota perdida:', error.response ? error.response.data : error.message);
-      setMensaje('Error al reportar la mascota perdida. Por favor, verifica la información.');
-      setTimeout(() => setMensaje(''), 3000);
-    }
+        // Refresca la lista de mascotas perdidas
+        return axios.get('/api/mascotasPerdidas');
+      })
+      .then(response => setMascotas(response.data))
+      .catch(error => {
+        console.error('Error al reportar la mascota perdida:', error);
+        setMensaje('Error al reportar la mascota perdida. Por favor, verifica la información.');
+      })
+      .finally(() => {
+        // Restablecer el mensaje después de un breve período
+        setTimeout(() => setMensaje(''), 3000);
+      });
   };
-
-  // Filtrar las mascotas para mostrar solo las que tienen información relevante
-  const filtradas = mascotas.filter(mascota => mascota.nombre || mascota.descripcion || mascota.telefono);
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -65,8 +52,8 @@ function MascotasPerdidas() {
             type="text"
             id="nombre"
             name="nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            value={nuevaMascota.nombre}
+            onChange={(e) => setNuevaMascota({ ...nuevaMascota, nombre: e.target.value })}
             placeholder="Nombre"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -78,8 +65,8 @@ function MascotasPerdidas() {
             type="text"
             id="descripcion"
             name="descripcion"
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
+            value={nuevaMascota.descripcion}
+            onChange={(e) => setNuevaMascota({ ...nuevaMascota, descripcion: e.target.value })}
             placeholder="Descripción"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -91,8 +78,8 @@ function MascotasPerdidas() {
             type="text"
             id="telefono"
             name="telefono"
-            value={telefono}
-            onChange={(e) => setTelefono(e.target.value)}
+            value={nuevaMascota.telefono}
+            onChange={(e) => setNuevaMascota({ ...nuevaMascota, telefono: e.target.value })}
             placeholder="Teléfono"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -106,12 +93,22 @@ function MascotasPerdidas() {
         </button>
       </form>
       {mensaje && (
-        <div className={`bg-${mensaje.includes('correctamente') ? 'green' : 'red'}-100 text-${mensaje.includes('correctamente') ? 'green' : 'red'}-800 border border-${mensaje.includes('correctamente') ? 'green' : 'red'}-400 rounded-lg p-4 mb-6`}>
+        <div className="bg-green-100 text-green-800 border border-green-400 rounded-lg p-4 mb-6">
           {mensaje}
         </div>
       )}
+      <h2 className="text-2xl font-semibold mb-4">Mascotas Perdidas Recientes</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filtradas.map(mascota => (
+        {mascotasRecientes.map((mascota, index) => (
+          <div key={index} className="border border-gray-300 rounded-lg p-4 shadow-sm">
+            <h2 className="text-xl font-semibold mb-2">{mascota.nombre}</h2>
+            <p className="text-gray-700 mb-4">{mascota.descripcion}</p>
+            <p className="text-gray-700">Teléfono: {mascota.telefono}</p>
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+        {mascotas.map(mascota => (
           <div key={mascota._id} className="border border-gray-300 rounded-lg p-4 shadow-sm">
             {mascota.nombre && <h2 className="text-xl font-semibold mb-2">{mascota.nombre}</h2>}
             {mascota.descripcion && <p className="text-gray-700 mb-4">{mascota.descripcion}</p>}
