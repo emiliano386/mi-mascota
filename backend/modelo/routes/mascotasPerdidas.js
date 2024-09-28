@@ -1,30 +1,77 @@
-const express = require('express');
-const router = express.Router();
-const MascotaPerdida = require('../ModeloMascotasPerdidas');
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-// Obtener todas las mascotas perdidas
-router.get('/', async (req, res) => {
-  try {
-    const mascotas = await MascotaPerdida.find();
-    res.json(mascotas);
-  } catch (error) {
-    console.error('Error al obtener las mascotas perdidas:', error);
-    res.status(500).json({ message: 'Error al obtener las mascotas perdidas.' });
-  }
-});
+const MascotasPerdidas = () => {
+  const [mascotas, setMascotas] = useState([]);
+  const [nombre, setNombre] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [mensajeExito, setMensajeExito] = useState('');
+  
+  useEffect(() => {
+    const obtenerMascotas = async () => {
+      const respuesta = await axios.get('https://mi-mascota-backend.onrender.com/api/mascotasPerdidas');
+      setMascotas(respuesta.data);
+    };
+    obtenerMascotas();
+  }, []);
 
-// Agregar una nueva mascota perdida
-router.post('/', async (req, res) => {
-  const { nombre, descripcion, telefono } = req.body;
+  const manejarRegistro = async (e) => {
+    e.preventDefault();
+    try {
+      const respuesta = await axios.post('https://mi-mascota-backend.onrender.com/api/mascotasPerdidas', {
+        nombre,
+        descripcion,
+        telefono,
+      });
+      setMascotas([...mascotas, respuesta.data]);
+      setMensajeExito('Mascota registrada con éxito.');
+      setNombre('');
+      setDescripcion('');
+      setTelefono('');
+    } catch (error) {
+      console.error('Error al registrar mascota:', error);
+      setMensajeExito('Hubo un error al registrar la mascota.');
+    }
+  };
 
-  try {
-    const nuevaMascota = new MascotaPerdida({ nombre, descripcion, telefono });
-    await nuevaMascota.save();
-    res.status(201).json({ message: 'Mascota perdida creada exitosamente', nuevaMascota });
-  } catch (error) {
-    console.error('Error al crear mascota perdida:', error);
-    res.status(400).json({ error: 'Error al crear la mascota perdida. ' + error.message });
-  }
-});
+  return (
+    <div>
+      <form onSubmit={manejarRegistro}>
+        <input
+          type="text"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          placeholder="Nombre"
+          required
+        />
+        <textarea
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
+          placeholder="Descripción"
+          required
+        />
+        <input
+          type="text"
+          value={telefono}
+          onChange={(e) => setTelefono(e.target.value)}
+          placeholder="Teléfono"
+          required
+        />
+        <button type="submit">Agregar Mascota Perdida</button>
+      </form>
+      {mensajeExito && <p>{mensajeExito}</p>}
+      <div>
+        {mascotas.map((mascota) => (
+          <div key={mascota._id}>
+            <h3>{mascota.nombre}</h3>
+            <p>{mascota.descripcion}</p>
+            <p>{mascota.telefono}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
-module.exports = router;
+export default MascotasPerdidas;

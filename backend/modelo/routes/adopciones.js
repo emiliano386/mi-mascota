@@ -1,30 +1,77 @@
-const express = require('express');
-const router = express.Router();
-const Adopcion = require('../ModeloAdopciones');
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-// Crear una nueva adopción
-router.post('/', async (req, res) => {
-  const { nombre, descripcion, telefono } = req.body;
+const Adopciones = () => {
+  const [adopciones, setAdopciones] = useState([]);
+  const [nombre, setNombre] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [mensajeExito, setMensajeExito] = useState('');
 
-  try {
-    const nuevaAdopcion = new Adopcion({ nombre, descripcion, telefono });
-    await nuevaAdopcion.save();
-    res.status(201).json({ message: 'Adopción creada exitosamente', nuevaAdopcion });
-  } catch (error) {
-    res.status(400).json({ error: 'Error al crear la adopción: ' + error.message });
-  }
-});
+  useEffect(() => {
+    const obtenerAdopciones = async () => {
+      const respuesta = await axios.get('https://mi-mascota-backend.onrender.com/api/adopciones');
+      setAdopciones(respuesta.data);
+    };
+    obtenerAdopciones();
+  }, []);
 
-// Obtener todas las adopciones
-router.get('/', async (req, res) => {
-  try {
-    const adopciones = await Adopcion.find();
-    res.json(adopciones);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al obtener las adopciones: ' + error.message });
-  }
-});
+  const manejarRegistro = async (e) => {
+    e.preventDefault();
+    try {
+      const respuesta = await axios.post('https://mi-mascota-backend.onrender.com/api/adopciones', {
+        nombre,
+        descripcion,
+        telefono,
+      });
+      setAdopciones([...adopciones, respuesta.data]);
+      setMensajeExito('Adopción registrada con éxito.');
+      setNombre('');
+      setDescripcion('');
+      setTelefono('');
+    } catch (error) {
+      console.error('Error al registrar adopción:', error);
+      setMensajeExito('Hubo un error al registrar la adopción.');
+    }
+  };
 
-// Otras rutas (por ID, actualizar, eliminar) se pueden agregar aquí
+  return (
+    <div>
+      <form onSubmit={manejarRegistro}>
+        <input
+          type="text"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          placeholder="Nombre"
+          required
+        />
+        <textarea
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
+          placeholder="Descripción"
+          required
+        />
+        <input
+          type="text"
+          value={telefono}
+          onChange={(e) => setTelefono(e.target.value)}
+          placeholder="Teléfono"
+          required
+        />
+        <button type="submit">Agregar Adopción</button>
+      </form>
+      {mensajeExito && <p>{mensajeExito}</p>}
+      <div>
+        {adopciones.map((adopcion) => (
+          <div key={adopcion._id}>
+            <h3>{adopcion.nombre}</h3>
+            <p>{adopcion.descripcion}</p>
+            <p>{adopcion.telefono}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
-module.exports = router;
+export default Adopciones;
