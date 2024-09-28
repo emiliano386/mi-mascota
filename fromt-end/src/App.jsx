@@ -67,7 +67,7 @@ function App() {
           <Veterinarias veterinarias={veterinarias} />
         )}
         {activeSection === 'refugios' && <Refugios />}
-        {activeSection === 'registro' && <Registro />}
+        {activeSection === 'registro' && <Registro />} {/* componente de Registro */}
       </main>
 
       <footer className="bg-green-500 p-4 text-center text-white">
