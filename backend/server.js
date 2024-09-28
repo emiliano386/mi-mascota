@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path'); // Importar el módulo path
 require('dotenv').config(); // Cargar variables de entorno desde el archivo .env
 
 // Rutas
@@ -24,6 +25,9 @@ app.use(cors(corsOptions));
 
 // Middleware
 app.use(express.json());
+
+// Servir archivos estáticos desde la carpeta 'src'
+app.use('/src', express.static(path.join(__dirname, 'src')));
 
 // Definir las rutas
 app.use('/api/adopciones', adopcionesRouter);
