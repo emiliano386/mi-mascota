@@ -67,7 +67,7 @@ function App() {
           <Veterinarias veterinarias={veterinarias} />
         )}
         {activeSection === 'refugios' && <Refugios />}
-        {activeSection === 'registro' && <Registro />} {/* componente de Registro */}
+        {activeSection === 'registro' && <Registro />}
       </main>
 
       <footer className="bg-green-500 p-4 text-center text-white">
@@ -78,4 +78,3 @@ function App() {
 }
 
 export default App;
-
