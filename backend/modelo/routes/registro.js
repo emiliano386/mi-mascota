@@ -4,35 +4,27 @@ const enviarCorreo = require('../enviarCorreo');
 const Usuario = require('../Usuario'); 
 const bcrypt = require('bcryptjs');
 
-// Ruta para manejar el registro
 router.post('/', async (req, res) => {
   const { email, password } = req.body;
 
-  // Agregar log para verificar la solicitud recibida
   console.log('Solicitud de registro recibida:', req.body);
 
-  // Validación básica de datos
   if (!email || !password) {
-    console.error('Error de validación: faltan datos'); // Log de error
+    console.error('Error de validación: faltan datos'); 
     return res.status(400).json({ error: 'Email y contraseña son requeridos' });
   }
 
   try {
-    // Verifica si el usuario ya existe
     const usuarioExistente = await Usuario.findOne({ email });
     if (usuarioExistente) {
-      console.error('Error: El usuario ya está registrado'); // Log de error
+      console.error('Error: El usuario ya está registrado'); 
       return res.status(400).json({ error: 'El usuario ya está registrado' });
     }
 
-    // Hashear la contraseña antes de guardar
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Crear y guardar el nuevo usuario
     const nuevoUsuario = new Usuario({ email, password: hashedPassword });
     await nuevoUsuario.save();
 
-    // Enviar correo de confirmación
     await enviarCorreo(
       email,
       'Confirmación de Registro',

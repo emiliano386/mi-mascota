@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const MascotaPerdida = require('../ModeloMascotasPerdidas'); // Asegúrate de que esta ruta sea correcta
+const MascotaPerdida = require('../ModeloMascotasPerdidas');
 
 // Obtener todas las mascotas perdidas
 router.get('/', async (req, res) => {
@@ -26,5 +26,7 @@ router.post('/', async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+// Otras rutas (por ID, actualizar, eliminar) se pueden agregar aquí
 
 module.exports = router;

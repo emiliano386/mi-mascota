@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Define el esquema del usuario
 const usuarioSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -18,7 +17,6 @@ const usuarioSchema = new mongoose.Schema({
   }
 });
 
-// Crea el modelo a partir del esquema
 const Usuario = mongoose.model('Usuario', usuarioSchema);
 
 module.exports = Usuario;

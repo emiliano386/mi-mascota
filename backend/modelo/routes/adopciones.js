@@ -25,49 +25,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Obtener una adopción por ID
-router.get('/:id', async (req, res) => {
-  try {
-    const adopcion = await Adopcion.findById(req.params.id);
-    if (!adopcion) {
-      return res.status(404).json({ error: 'Adopción no encontrada' });
-    }
-    res.json(adopcion);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Actualizar una adopción por ID
-router.put('/:id', async (req, res) => {
-  const { nombre, descripcion, telefono } = req.body;
-
-  try {
-    const adopcion = await Adopcion.findByIdAndUpdate(
-      req.params.id,
-      { nombre, descripcion, telefono },
-      { new: true }
-    );
-    if (!adopcion) {
-      return res.status(404).json({ error: 'Adopción no encontrada' });
-    }
-    res.json(adopcion);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Eliminar una adopción por ID
-router.delete('/:id', async (req, res) => {
-  try {
-    const adopcion = await Adopcion.findByIdAndDelete(req.params.id);
-    if (!adopcion) {
-      return res.status(404).json({ error: 'Adopción no encontrada' });
-    }
-    res.json({ message: 'Adopción eliminada' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Otras rutas (por ID, actualizar, eliminar) se pueden agregar aquí
 
 module.exports = router;
