@@ -7,7 +7,7 @@ const Registro = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(''); // Estado para el mensaje de éxito
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,10 +21,10 @@ const Registro = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setSuccessMessage(''); // Limpiar el mensaje de éxito al intentar registrar
+    setSuccessMessage('');
 
     try {
-      const response = await fetch('https://mi-mascota-hazel.vercel.app/api/registro', {
+      const response = await fetch('https://mi-mascota-backend.onrender.com/api/registro', { // URL actualizada
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ const Registro = () => {
 
       const data = await response.json();
       console.log('Respuesta del servidor:', data);
-      setSuccessMessage('¡Te has registrado con éxito!'); // Mostrar el mensaje de éxito
+      setSuccessMessage('¡Te has registrado con éxito!');
     } catch (e) {
       setError('Ocurrió un error al enviar el formulario.');
       console.error('Error:', e);
@@ -76,7 +76,7 @@ const Registro = () => {
           />
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>} {/* Mensaje de éxito */}
+        {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
         <button
           type="submit"
           style={{ backgroundColor: 'green', color: 'white', padding: '10px', border: 'none', cursor: 'pointer' }}

@@ -14,6 +14,9 @@ function App() {
   const [adopciones, setAdopciones] = useState([]);
   const [mascotasPerdidas, setMascotasPerdidas] = useState([]);
 
+  // Cambia la URL a la de tu backend en Render
+  const API_BASE_URL = 'https://mi-mascota-backend.onrender.com';
+
   // Fetch data based on active section
   const fetchData = async (url, setState) => {
     try {
@@ -32,13 +35,15 @@ function App() {
   useEffect(() => {
     switch (activeSection) {
       case 'veterinarias':
-        fetchData('http://localhost:5000/api/veterinarias', setVeterinarias);
+        fetchData(`${API_BASE_URL}/api/veterinarias`, setVeterinarias);
         break;
       case 'adopciones':
-        fetchData('http://localhost:5000/api/adopciones', setAdopciones);
+        fetchData(`${API_BASE_URL}/api/adopciones`, setAdopciones);
         break;
       case 'mascotas-perdidas':
-        fetchData('http://localhost:5000/api/mascotas-perdidas', setMascotasPerdidas);
+        fetchData(`${API_BASE_URL}/api/mascotas-perdidas`, setMascotasPerdidas);
+        break;
+      case 'registro': 
         break;
       default:
         break;
@@ -62,7 +67,7 @@ function App() {
           <Veterinarias veterinarias={veterinarias} />
         )}
         {activeSection === 'refugios' && <Refugios />}
-        {activeSection === 'registro' && <Registro />}
+        {activeSection === 'registro' && <Registro />} {/* componente de Registro */}
       </main>
 
       <footer className="bg-green-500 p-4 text-center text-white">
@@ -73,3 +78,4 @@ function App() {
 }
 
 export default App;
+
