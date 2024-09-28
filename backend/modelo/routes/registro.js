@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const enviarCorreo = require('../enviarCorreo'); 
 const Usuario = require('../Usuario'); 
-const bcrypt = require('bcryptjs'); // Asegúrate de estar usando bcryptjs
+const bcrypt = require('bcryptjs');
 
 // Ruta para manejar el registro
 router.post('/', async (req, res) => {
@@ -13,6 +13,7 @@ router.post('/', async (req, res) => {
 
   // Validación básica de datos
   if (!email || !password) {
+    console.error('Error de validación: faltan datos'); // Log de error
     return res.status(400).json({ error: 'Email y contraseña son requeridos' });
   }
 
@@ -20,6 +21,7 @@ router.post('/', async (req, res) => {
     // Verifica si el usuario ya existe
     const usuarioExistente = await Usuario.findOne({ email });
     if (usuarioExistente) {
+      console.error('Error: El usuario ya está registrado'); // Log de error
       return res.status(400).json({ error: 'El usuario ya está registrado' });
     }
 
@@ -40,16 +42,7 @@ router.post('/', async (req, res) => {
     res.status(201).json({ message: 'Usuario registrado con éxito' });
   } catch (error) {
     console.error('Error al registrar usuario:', error);
-
-    // Manejo de errores específicos
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ error: error.message });
-    } else if (error.code === 11000) { // Código de error para duplicados
-      return res.status(400).json({ error: 'El usuario ya está registrado' });
-    }
-
-    // Manejo de errores genéricos
-    res.status(500).json({ error: 'Error al registrar usuario' });
+    res.status(500).json({ error: 'Error al registrar usuario', detalle: error.message });
   }
 });
 
