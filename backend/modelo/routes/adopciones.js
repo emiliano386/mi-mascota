@@ -1,4 +1,3 @@
-// En el componente de adopciones
 const manejarRegistro = async (e) => {
   e.preventDefault();
   try {

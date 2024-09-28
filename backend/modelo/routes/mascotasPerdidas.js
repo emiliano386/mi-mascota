@@ -1,4 +1,3 @@
-// En el componente de mascotas perdidas
 const manejarRegistro = async (e) => {
   e.preventDefault();
   try {

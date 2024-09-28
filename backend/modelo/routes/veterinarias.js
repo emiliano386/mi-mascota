@@ -5,31 +5,30 @@ const Veterinaria = require('../ModeloVeterinarias'); // Asegúrate de que esta 
 // Obtener todas las veterinarias
 router.get('/', async (req, res) => {
     try {
-        const veterinarias = await Veterinaria.find();
+        const veterinarias = await Veterinaria.find(); // Busca todas las veterinarias en la base de datos
         res.json(veterinarias);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
-// Agregar una nueva veterinaria (sin manejo de imágenes)
+// Agregar una nueva veterinaria
 router.post('/', async (req, res) => {
     const veterinaria = new Veterinaria({
         nombre: req.body.nombre,
         direccion: req.body.direccion,
         telefono: req.body.telefono,
-        // No se incluye la imagen
     });
 
     try {
-        const nuevaVeterinaria = await veterinaria.save();
+        const nuevaVeterinaria = await veterinaria.save(); // Guarda la nueva veterinaria en la base de datos
         res.status(201).json(nuevaVeterinaria);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
 
-// Actualizar una veterinaria existente (PUT) (sin manejo de imágenes)
+// Actualizar una veterinaria existente
 router.put('/:id', async (req, res) => {
     try {
         const veterinaria = await Veterinaria.findById(req.params.id);
@@ -37,11 +36,10 @@ router.put('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Veterinaria no encontrada' });
         }
 
-        // Actualizar los campos con los datos del cuerpo de la solicitud
+        // Actualiza los campos
         veterinaria.nombre = req.body.nombre || veterinaria.nombre;
         veterinaria.direccion = req.body.direccion || veterinaria.direccion;
         veterinaria.telefono = req.body.telefono || veterinaria.telefono;
-        // No se actualiza la imagen
 
         const veterinariaActualizada = await veterinaria.save();
         res.json(veterinariaActualizada);
@@ -50,7 +48,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Actualizar parcialmente una veterinaria existente (PATCH) (sin manejo de imágenes)
+// Actualizar parcialmente una veterinaria existente
 router.patch('/:id', async (req, res) => {
     try {
         const veterinaria = await Veterinaria.findById(req.params.id);
@@ -58,11 +56,10 @@ router.patch('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Veterinaria no encontrada' });
         }
 
-        // Actualizar solo los campos que se envían en el cuerpo de la solicitud
+        // Actualiza solo los campos que se envían
         if (req.body.nombre) veterinaria.nombre = req.body.nombre;
         if (req.body.direccion) veterinaria.direccion = req.body.direccion;
         if (req.body.telefono) veterinaria.telefono = req.body.telefono;
-        // No se actualiza la imagen
 
         const veterinariaActualizada = await veterinaria.save();
         res.json(veterinariaActualizada);
