@@ -40,6 +40,15 @@ router.post('/', async (req, res) => {
     res.status(201).json({ message: 'Usuario registrado con éxito' });
   } catch (error) {
     console.error('Error al registrar usuario:', error);
+
+    // Manejo de errores específicos
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    } else if (error.code === 11000) { // Código de error para duplicados
+      return res.status(400).json({ error: 'El usuario ya está registrado' });
+    }
+
+    // Manejo de errores genéricos
     res.status(500).json({ error: 'Error al registrar usuario' });
   }
 });
