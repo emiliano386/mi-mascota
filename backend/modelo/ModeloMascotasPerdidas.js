@@ -18,7 +18,6 @@ const mascotaPerdidaSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  // El campo imagen ha sido eliminado
 });
 
 module.exports = mongoose.model('MascotaPerdida', mascotaPerdidaSchema);

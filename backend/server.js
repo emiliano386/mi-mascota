@@ -15,7 +15,7 @@ const port = process.env.PORT || 5000;
 
 // Configuración de CORS
 const corsOptions = {
-  origin: '*',
+  origin: '*', // Puedes cambiar esto a una URL específica si es necesario
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
 };
@@ -25,7 +25,7 @@ app.use(cors(corsOptions));
 // Middleware
 app.use(express.json());
 
-// Rutas
+// Definir las rutas
 app.use('/api/adopciones', adopcionesRouter);
 app.use('/api/mascotasPerdidas', mascotasPerdidasRouter); 
 app.use('/api/veterinarias', veterinariasRouter);
@@ -39,7 +39,7 @@ if (!mongoUri) {
   process.exit(1);
 }
 
-mongoose.connect(mongoUri)
+mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Conectado a MongoDB'))
   .catch(err => {
     console.error('Error al conectar a MongoDB:', err);
