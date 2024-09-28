@@ -7,13 +7,20 @@
     <title>Mi mascota</title>
 
     <!-- Carga de estilos CSS -->
-    <link rel="stylesheet" href="/styles/styless.css" /> <!-- Cambiado a la ruta correcta -->
-    <!-- Asegúrate de tener un archivo JavaScript aquí si es necesario -->
+    <link rel="stylesheet" href="/styles/styless.css" /> <!-- Ruta a tu archivo CSS -->
+    <link rel="stylesheet" href="/styles/index.css" /> <!-- Asegúrate de que Tailwind CSS esté incluido aquí -->
 </head>
-<body>
-    <div id="root"></div>
+<body class="bg-gray-100"> <!-- Agregué una clase de Tailwind para el color de fondo -->
+    <div id="root" class="max-w-5xl mx-auto p-4 text-center"> <!-- Clase para centrar y limitar el ancho -->
+        <img src="/vite.svg" alt="Logo" class="logo h-24 mx-auto mb-4" /> <!-- Ajusté el logo -->
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">¡Bienvenido a Mi Mascota!</h1> <!-- Encabezado -->
+        <p class="text-gray-600 mb-4">Aquí puedes encontrar información sobre adopciones, veterinarias y más.</p>
+        <div class="card bg-white rounded-lg shadow-lg p-6"> <!-- Clase para tarjeta -->
+            <!-- Contenido de la tarjeta -->
+        </div>
+    </div>
 
-    <!-- Carga del script principal al final, agrega aquí si tienes un archivo JavaScript -->
-    <script type="module" src="/src/main.jsx"></script> <!-- Reemplazado por el script correcto -->
+    <!-- Carga del script principal al final -->
+    <script type="module" src="/src/main.jsx"></script> <!-- Asegúrate de que este script exista -->
 </body>
 </html>
