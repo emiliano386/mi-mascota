@@ -27,10 +27,10 @@ app.use(express.json());
 
 // Rutas
 app.use('/api/adopciones', adopcionesRouter);
-app.use('/api/mascotasPerdidas', mascotasPerdidasRouter); // Asegúrate de que la ruta sea consistente
+app.use('/api/mascotasPerdidas', mascotasPerdidasRouter); 
 app.use('/api/veterinarias', veterinariasRouter);
 app.use('/api/registro', registroRouter);
-app.use('/api/enviar-correo', enviarCorreoRouter); // Consistencia en las rutas
+app.use('/api/enviar-correo', enviarCorreoRouter); 
 
 // Conectar a MongoDB
 const mongoUri = process.env.MONGODB_URI; // Obtener la URI desde .env

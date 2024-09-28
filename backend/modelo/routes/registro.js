@@ -8,6 +8,9 @@ const bcrypt = require('bcrypt'); // Importa bcrypt para hashear la contraseña
 router.post('/', async (req, res) => {
   const { email, password } = req.body;
 
+  // Agregar log para verificar la solicitud recibida
+  console.log('Solicitud de registro recibida:', req.body);
+
   // Validación básica de datos
   if (!email || !password) {
     return res.status(400).json({ error: 'Email y contraseña son requeridos' });
