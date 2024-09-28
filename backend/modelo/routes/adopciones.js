@@ -9,9 +9,9 @@ router.post('/', async (req, res) => {
   try {
     const nuevaAdopcion = new Adopcion({ nombre, descripcion, telefono });
     await nuevaAdopcion.save();
-    res.status(201).json(nuevaAdopcion);
+    res.status(201).json({ message: 'Adopción creada exitosamente', nuevaAdopcion });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: 'Error al crear la adopción: ' + error.message });
   }
 });
 
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
     const adopciones = await Adopcion.find();
     res.json(adopciones);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error al obtener las adopciones: ' + error.message });
   }
 });
 

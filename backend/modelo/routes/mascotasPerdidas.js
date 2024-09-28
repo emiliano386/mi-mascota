@@ -20,13 +20,11 @@ router.post('/', async (req, res) => {
   try {
     const nuevaMascota = new MascotaPerdida({ nombre, descripcion, telefono });
     await nuevaMascota.save();
-    res.status(201).json(nuevaMascota);
+    res.status(201).json({ message: 'Mascota perdida creada exitosamente', nuevaMascota });
   } catch (error) {
     console.error('Error al crear mascota perdida:', error);
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: 'Error al crear la mascota perdida. ' + error.message });
   }
 });
-
-// Otras rutas (por ID, actualizar, eliminar) se pueden agregar aquí
 
 module.exports = router;
