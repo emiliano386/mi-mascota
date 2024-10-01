@@ -5,18 +5,19 @@ const Adopciones = () => {
   const [adopciones, setAdopciones] = useState([]);
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
-  const [telefono, setTelefono] = useState('');
+  const [telefono, setTelefono] = useState(''); 
   const [error, setError] = useState('');
 
+  const fetchAdopciones = async () => {
+    try {
+      const response = await axios.get('https://mi-mascota-backend.onrender.com/adopciones');
+      setAdopciones(response.data);
+    } catch (err) {
+      setError('Error al cargar las adopciones.');
+    }
+  };
+
   useEffect(() => {
-    const fetchAdopciones = async () => {
-      try {
-        const response = await axios.get('https://mi-mascota-backend.onrender.com/adopciones');
-        setAdopciones(response.data);
-      } catch (err) {
-        setError('Error al cargar las adopciones.');
-      }
-    };
     fetchAdopciones();
   }, []);
 
@@ -25,7 +26,7 @@ const Adopciones = () => {
     try {
       await axios.post('https://mi-mascota-backend.onrender.com/adopciones', { nombre, descripcion, telefono });
       // Volver a obtener la lista de adopciones después de agregar una nueva
-      fetchAdopciones();
+      fetchAdopciones(); // Esto ahora funcionará
       // Limpiar los campos
       setNombre('');
       setDescripcion('');

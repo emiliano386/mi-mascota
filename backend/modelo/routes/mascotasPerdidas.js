@@ -8,15 +8,17 @@ const MascotasPerdidas = () => {
   const [telefono, setTelefono] = useState('');
   const [error, setError] = useState('');
 
+  // Mover esta función fuera de useEffect
+  const fetchMascotas = async () => {
+    try {
+      const response = await axios.get('https://mi-mascota-backend.onrender.com/mascotas-perdidas');
+      setMascotas(response.data);
+    } catch (err) {
+      setError('Error al cargar las mascotas perdidas.');
+    }
+  };
+
   useEffect(() => {
-    const fetchMascotas = async () => {
-      try {
-        const response = await axios.get('https://mi-mascota-backend.onrender.com/mascotas-perdidas');
-        setMascotas(response.data);
-      } catch (err) {
-        setError('Error al cargar las mascotas perdidas.');
-      }
-    };
     fetchMascotas();
   }, []);
 
@@ -25,7 +27,7 @@ const MascotasPerdidas = () => {
     try {
       await axios.post('https://mi-mascota-backend.onrender.com/mascotas-perdidas', { nombre, descripcion, telefono });
       // Volver a obtener la lista de mascotas después de agregar una nueva
-      fetchMascotas();
+      fetchMascotas(); // Esto ahora funcionará
       // Limpiar los campos
       setNombre('');
       setDescripcion('');
