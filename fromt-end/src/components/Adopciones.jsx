@@ -24,7 +24,7 @@ const Adopciones = () => {
     // Crear un objeto de adopción
     const nuevaAdopcion = { nombre, descripcion, telefono };
 
-    // Simular un retraso de carga (puedes ajustarlo o eliminarlo)
+    // Simular un retraso de carga
     setTimeout(() => {
       // Actualizar el estado de adopciones recientes
       const nuevasAdopciones = [...adopcionesRecientes, nuevaAdopcion];
@@ -41,7 +41,7 @@ const Adopciones = () => {
       // Mostrar mensaje de éxito
       setCargando(false);
       setMensaje('Su mascota se cargó con éxito.');
-    }, 1500); // 1.5 segundos de retraso
+    }, 1500);
   };
 
   return (
@@ -87,15 +87,15 @@ const Adopciones = () => {
       {!cargando && mensaje && <p className="mt-4 text-green-600">{mensaje}</p>}
 
       <h3 className="text-lg font-bold mt-6">Adopciones Recientes:</h3>
-      <ul className="w-full max-w-md">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-4xl mt-4">
         {adopcionesRecientes.map((adopcion, index) => (
-          <li key={index} className="border-b py-2">
-            <strong>Nombre:</strong> {adopcion.nombre} <br />
-            <strong>Descripción:</strong> {adopcion.descripcion} <br />
-            <strong>Teléfono:</strong> {adopcion.telefono}
-          </li>
+          <div key={index} className="border rounded-lg p-4 shadow-md bg-white">
+            <h4 className="font-bold">{adopcion.nombre}</h4>
+            <p className="mt-1"><strong>Descripción:</strong> {adopcion.descripcion}</p>
+            <p className="mt-1"><strong>Teléfono:</strong> {adopcion.telefono}</p>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
