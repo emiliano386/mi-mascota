@@ -1,74 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+const express = require('express');
+const router = express.Router();
+const Adopcion = require('../modelos/Adopcion'); // Asegúrate de tener un modelo Adopcion definido
 
-const Adopciones = () => {
-  const [adopciones, setAdopciones] = useState([]);
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
-  const [telefono, setTelefono] = useState(''); 
-  const [error, setError] = useState('');
+// Obtener todas las adopciones
+router.get('/', async (req, res) => {
+  try {
+    const adopciones = await Adopcion.find(); // Obtener todas las adopciones de la base de datos
+    res.json(adopciones); // Enviar las adopciones como respuesta
+  } catch (err) {
+    res.status(500).json({ message: err.message }); // Manejo de errores
+  }
+});
 
-  const fetchAdopciones = async () => {
-    try {
-      const response = await axios.get('https://mi-mascota-backend.onrender.com/adopciones');
-      setAdopciones(response.data);
-    } catch (err) {
-      setError('Error al cargar las adopciones.');
-    }
-  };
+// Crear una nueva adopción
+router.post('/', async (req, res) => {
+  const nuevaAdopcion = new Adopcion({
+    nombre: req.body.nombre,
+    descripcion: req.body.descripcion,
+    telefono: req.body.telefono,
+  });
 
-  useEffect(() => {
-    fetchAdopciones();
-  }, []);
+  try {
+    const guardada = await nuevaAdopcion.save(); // Guardar la nueva adopción en la base de datos
+    res.status(201).json(guardada); // Enviar la adopción guardada como respuesta
+  } catch (err) {
+    res.status(400).json({ message: err.message }); // Manejo de errores
+  }
+});
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('https://mi-mascota-backend.onrender.com/adopciones', { nombre, descripcion, telefono });
-      // Volver a obtener la lista de adopciones después de agregar una nueva
-      fetchAdopciones(); // Esto ahora funcionará
-      // Limpiar los campos
-      setNombre('');
-      setDescripcion('');
-      setTelefono('');
-    } catch (err) {
-      setError('Error al agregar la adopción.');
-    }
-  };
-
-  return (
-    <div>
-      <h2>Crear Adopción</h2>
-      {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          placeholder="Nombre"
-          required
-        />
-        <input
-          value={descripcion}
-          onChange={(e) => setDescripcion(e.target.value)}
-          placeholder="Descripción"
-          required
-        />
-        <input
-          value={telefono}
-          onChange={(e) => setTelefono(e.target.value)}
-          placeholder="Teléfono"
-          required
-        />
-        <button type="submit">Agregar</button>
-      </form>
-      <h2>Lista de Adopciones</h2>
-      <ul>
-        {adopciones.map((adopcion) => (
-          <li key={adopcion._id}>{adopcion.nombre}</li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export default Adopciones;
+module.exports = router; // Exportar el router para usarlo en server.js
