@@ -41,6 +41,11 @@ const Adopciones = () => {
       // Mostrar mensaje de éxito
       setCargando(false);
       setMensaje('Su mascota se cargó con éxito.');
+
+      // Ocultar mensaje después de 3 segundos
+      setTimeout(() => {
+        setMensaje('');
+      }, 3000); // 3000 ms = 3 segundos
     }, 1500);
   };
 
