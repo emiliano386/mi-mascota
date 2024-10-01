@@ -10,6 +10,7 @@ import MascotasPerdidas from './components/MascotasPerdidas';
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
+  const [veterinarias, setVeterinarias] = useState([]);
   const [adopciones, setAdopciones] = useState([]);
   const [mascotasPerdidas, setMascotasPerdidas] = useState([]);
 
@@ -33,6 +34,9 @@ function App() {
   // Effect to fetch data based on active section
   useEffect(() => {
     switch (activeSection) {
+      case 'veterinarias':
+        fetchData(`${API_BASE_URL}/api/veterinarias`, setVeterinarias);
+        break;
       case 'adopciones':
         fetchData(`${API_BASE_URL}/api/adopciones`, setAdopciones);
         break;
@@ -60,10 +64,10 @@ function App() {
           <Adopciones adopciones={adopciones} />
         )}
         {activeSection === 'veterinarias' && (
-          <Veterinarias /> {/* Solo muestra el componente sin fetch */}
+          <Veterinarias veterinarias={veterinarias} />
         )}
         {activeSection === 'refugios' && <Refugios />}
-        {activeSection === 'registro' && <Registro />}
+        {activeSection === 'registro' && <Registro />} {/* componente de Registro */}
       </main>
 
       <footer className="bg-green-500 p-4 text-center text-white">
