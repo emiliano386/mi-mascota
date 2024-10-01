@@ -1,30 +1,73 @@
-const express = require('express');
-const router = express.Router();
-const Adopcion = require('../ModeloAdopciones');
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-// Crear una nueva adopción
-router.post('/', async (req, res) => {
-  const { nombre, descripcion, telefono } = req.body;
+const Adopciones = () => {
+  const [adopciones, setAdopciones] = useState([]);
+  const [nombre, setNombre] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [error, setError] = useState('');
 
-  try {
-    const nuevaAdopcion = new Adopcion({ nombre, descripcion, telefono });
-    await nuevaAdopcion.save();
-    res.status(201).json({ message: 'Adopción creada exitosamente', nuevaAdopcion });
-  } catch (error) {
-    res.status(400).json({ error: 'Error al crear la adopción: ' + error.message });
-  }
-});
+  useEffect(() => {
+    const fetchAdopciones = async () => {
+      try {
+        const response = await axios.get('https://mi-mascota-backend.onrender.com/adopciones');
+        setAdopciones(response.data);
+      } catch (err) {
+        setError('Error al cargar las adopciones.');
+      }
+    };
+    fetchAdopciones();
+  }, []);
 
-// Obtener todas las adopciones
-router.get('/', async (req, res) => {
-  try {
-    const adopciones = await Adopcion.find();
-    res.json(adopciones);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al obtener las adopciones: ' + error.message });
-  }
-});
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('https://mi-mascota-backend.onrender.com/adopciones', { nombre, descripcion, telefono });
+      // Volver a obtener la lista de adopciones después de agregar una nueva
+      fetchAdopciones();
+      // Limpiar los campos
+      setNombre('');
+      setDescripcion('');
+      setTelefono('');
+    } catch (err) {
+      setError('Error al agregar la adopción.');
+    }
+  };
 
-// Otras rutas (por ID, actualizar, eliminar) se pueden agregar aquí
+  return (
+    <div>
+      <h2>Crear Adopción</h2>
+      {error && <p>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <input
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          placeholder="Nombre"
+          required
+        />
+        <input
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
+          placeholder="Descripción"
+          required
+        />
+        <input
+          value={telefono}
+          onChange={(e) => setTelefono(e.target.value)}
+          placeholder="Teléfono"
+          required
+        />
+        <button type="submit">Agregar</button>
+      </form>
+      <h2>Lista de Adopciones</h2>
+      <ul>
+        {adopciones.map((adopcion) => (
+          <li key={adopcion._id}>{adopcion.nombre}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
-module.exports = router;
+export default Adopciones;

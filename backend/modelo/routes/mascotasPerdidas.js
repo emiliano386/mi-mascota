@@ -1,30 +1,73 @@
-const express = require('express');
-const router = express.Router();
-const MascotaPerdida = require('../ModeloMascotasPerdidas');
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-// Obtener todas las mascotas perdidas
-router.get('/', async (req, res) => {
-  try {
-    const mascotas = await MascotaPerdida.find();
-    res.json(mascotas);
-  } catch (error) {
-    console.error('Error al obtener las mascotas perdidas:', error);
-    res.status(500).json({ message: 'Error al obtener las mascotas perdidas.' });
-  }
-});
+const MascotasPerdidas = () => {
+  const [mascotas, setMascotas] = useState([]);
+  const [nombre, setNombre] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [error, setError] = useState('');
 
-// Agregar una nueva mascota perdida
-router.post('/', async (req, res) => {
-  const { nombre, descripcion, telefono } = req.body;
+  useEffect(() => {
+    const fetchMascotas = async () => {
+      try {
+        const response = await axios.get('https://mi-mascota-backend.onrender.com/mascotas-perdidas');
+        setMascotas(response.data);
+      } catch (err) {
+        setError('Error al cargar las mascotas perdidas.');
+      }
+    };
+    fetchMascotas();
+  }, []);
 
-  try {
-    const nuevaMascota = new MascotaPerdida({ nombre, descripcion, telefono });
-    await nuevaMascota.save();
-    res.status(201).json({ message: 'Mascota perdida creada exitosamente', nuevaMascota });
-  } catch (error) {
-    console.error('Error al crear mascota perdida:', error);
-    res.status(400).json({ error: 'Error al crear la mascota perdida. ' + error.message });
-  }
-});
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('https://mi-mascota-backend.onrender.com/mascotas-perdidas', { nombre, descripcion, telefono });
+      // Volver a obtener la lista de mascotas después de agregar una nueva
+      fetchMascotas();
+      // Limpiar los campos
+      setNombre('');
+      setDescripcion('');
+      setTelefono('');
+    } catch (err) {
+      setError('Error al agregar la mascota perdida.');
+    }
+  };
 
-module.exports = router;
+  return (
+    <div>
+      <h2>Reportar Mascota Perdida</h2>
+      {error && <p>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <input
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          placeholder="Nombre"
+          required
+        />
+        <input
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
+          placeholder="Descripción"
+          required
+        />
+        <input
+          value={telefono}
+          onChange={(e) => setTelefono(e.target.value)}
+          placeholder="Teléfono"
+          required
+        />
+        <button type="submit">Agregar</button>
+      </form>
+      <h2>Lista de Mascotas Perdidas</h2>
+      <ul>
+        {mascotas.map((mascota) => (
+          <li key={mascota._id}>{mascota.nombre}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default MascotasPerdidas;
