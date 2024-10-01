@@ -8,25 +8,20 @@ function MascotasPerdidas() {
 
   // Cargar las mascotas perdidas desde el backend o desde localStorage
   useEffect(() => {
-    const cargarMascotasDesdeLocalStorage = () => {
+    const cargarMascotas = () => {
       const mascotasGuardadas = localStorage.getItem('mascotasPerdidas');
       if (mascotasGuardadas) {
         setMascotas(JSON.parse(mascotasGuardadas));
+      } else {
+        axios.get('/api/mascotasPerdidas')
+          .then(response => {
+            setMascotas(response.data);
+            localStorage.setItem('mascotasPerdidas', JSON.stringify(response.data)); // Guardar en localStorage
+          })
+          .catch(error => console.error('Error al obtener las mascotas perdidas:', error));
       }
     };
-
-    const cargarMascotasDesdeApi = async () => {
-      try {
-        const response = await axios.get('/api/mascotasPerdidas');
-        setMascotas(response.data);
-        localStorage.setItem('mascotasPerdidas', JSON.stringify(response.data)); // Guardar en localStorage
-      } catch (error) {
-        console.error('Error al obtener las mascotas perdidas:', error);
-      }
-    };
-
-    cargarMascotasDesdeLocalStorage();
-    cargarMascotasDesdeApi();
+    cargarMascotas();
   }, []);
 
   // Manejar el envío del formulario
@@ -40,7 +35,7 @@ function MascotasPerdidas() {
         // Resetear el formulario
         setNuevaMascota({ nombre: '', descripcion: '', telefono: '' });
 
-        // Refresca la lista de mascotas perdidas
+        // Actualizar la lista de mascotas
         return axios.get('/api/mascotasPerdidas');
       })
       .then(response => {
