@@ -40,7 +40,7 @@ function App() {
       case 'adopciones':
         fetchData(`${API_BASE_URL}/api/adopciones`, setAdopciones);
         break;
-      case 'mascotasPerdidas':
+      case 'mascotas-perdidas':
         fetchData(`${API_BASE_URL}/api/mascotasPerdidas`, setMascotasPerdidas);
         break;
       case 'registro': 
@@ -57,7 +57,7 @@ function App() {
       <main className="flex flex-col flex-1 p-4">
         {activeSection === 'home' && <Home />}
         {activeSection === 'sobre-nosotros' && <SobreNosotros />}
-        {activeSection === 'mascotasPerdidas' && (
+        {activeSection === 'mascotas-perdidas' && (
           <MascotasPerdidas mascotasPerdidas={mascotasPerdidas} />
         )}
         {activeSection === 'adopciones' && (
