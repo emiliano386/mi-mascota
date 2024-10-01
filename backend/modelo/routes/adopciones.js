@@ -1,31 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const Adopcion = require('../modelos/Adopcion'); // Asegúrate de tener un modelo Adopcion definido
+const Adopcion = require('../ModeloAdopciones');
+
+// Crear una nueva adopción
+router.post('/', async (req, res) => {
+  const { nombre, descripcion, telefono } = req.body;
+
+  try {
+    const nuevaAdopcion = new Adopcion({ nombre, descripcion, telefono });
+    await nuevaAdopcion.save();
+    res.status(201).json({ message: 'Adopción creada exitosamente', nuevaAdopcion });
+  } catch (error) {
+    console.error('Error al crear la adopción:', error);
+    res.status(400).json({ error: 'Error al crear la adopción: ' + error.message });
+  }
+});
 
 // Obtener todas las adopciones
 router.get('/', async (req, res) => {
   try {
-    const adopciones = await Adopcion.find(); // Obtener todas las adopciones de la base de datos
-    res.json(adopciones); // Enviar las adopciones como respuesta
-  } catch (err) {
-    res.status(500).json({ message: err.message }); // Manejo de errores
+    const adopciones = await Adopcion.find();
+    res.json(adopciones);
+  } catch (error) {
+    console.error('Error al obtener las adopciones:', error);
+    res.status(500).json({ error: 'Error al obtener las adopciones: ' + error.message });
   }
 });
 
-// Crear una nueva adopción
-router.post('/', async (req, res) => {
-  const nuevaAdopcion = new Adopcion({
-    nombre: req.body.nombre,
-    descripcion: req.body.descripcion,
-    telefono: req.body.telefono,
-  });
+// Otras rutas (por ID, actualizar, eliminar) se pueden agregar aquí
 
-  try {
-    const guardada = await nuevaAdopcion.save(); // Guardar la nueva adopción en la base de datos
-    res.status(201).json(guardada); // Enviar la adopción guardada como respuesta
-  } catch (err) {
-    res.status(400).json({ message: err.message }); // Manejo de errores
-  }
-});
-
-module.exports = router; // Exportar el router para usarlo en server.js
+module.exports = router;

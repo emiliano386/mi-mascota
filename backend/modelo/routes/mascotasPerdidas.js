@@ -1,32 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const MascotaPerdida = require('../modelos/MascotaPerdida'); // Asegúrate de tener un modelo MascotaPerdida definido
+const MascotaPerdida = require('../ModeloMascotasPerdidas');
 
 // Obtener todas las mascotas perdidas
 router.get('/', async (req, res) => {
   try {
-    const mascotas = await MascotaPerdida.find(); // Obtener todas las mascotas perdidas de la base de datos
-    res.json(mascotas); // Enviar las mascotas como respuesta
-  } catch (err) {
-    res.status(500).json({ message: err.message }); // Manejo de errores
+    const mascotas = await MascotaPerdida.find();
+    res.json(mascotas);
+  } catch (error) {
+    console.error('Error al obtener las mascotas perdidas:', error);
+    res.status(500).json({ message: 'Error al obtener las mascotas perdidas.' });
   }
 });
 
-// Crear una nueva mascota perdida
+// Agregar una nueva mascota perdida
 router.post('/', async (req, res) => {
-  const nuevaMascota = new MascotaPerdida({
-    nombre: req.body.nombre,
-    descripcion: req.body.descripcion,
-    telefono: req.body.telefono,
-  });
+  const { nombre, descripcion, telefono } = req.body;
 
   try {
-    const guardada = await nuevaMascota.save(); // Guardar la nueva mascota en la base de datos
-    res.status(201).json(guardada); // Enviar la mascota guardada como respuesta
-  } catch (err) {
-    res.status(400).json({ message: err.message }); // Manejo de errores
+    const nuevaMascota = new MascotaPerdida({ nombre, descripcion, telefono });
+    await nuevaMascota.save();
+    res.status(201).json({ message: 'Mascota perdida creada exitosamente', nuevaMascota });
+  } catch (error) {
+    console.error('Error al crear mascota perdida:', error);
+    res.status(400).json({ error: 'Error al crear la mascota perdida. ' + error.message });
   }
 });
 
-module.exports = router; // Exportar el router para usarlo en server.js
-
+module.exports = router;
